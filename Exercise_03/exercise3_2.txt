@@ -1,0 +1,21 @@
+Structure of a CPE Name
+
+A CPE name is a URL that encodes seven ordered fields:
+
+cpe:/<part>:<vendor>:<product>:<version>:<update>:<edition>:<language>
+
+Some of the fields may be left blank, and empty fields may be left off the end of the URL. The main division of CPE names is in the <part> field; this can take on only three values:
+a for applications,
+h for hardware platforms, or
+o for operating systems.
+
+By looking at the beginning of the URL you can easily see that cpe:/a:microsoft:sql_server:6.5 names an application, cpe:/h:asus:rt-n16 names a kind of hardware, and cpe:/o:freebsd:freebsd:3.5.1 names an operating system.
+
+Nmap can output all three kinds of CPE names: OS detection can print h and o; and service detection can potentially output all three. The CPE names are mixed in with normal OS and service output, for example: 
+
+
+
+nc 10.0.0.12 4242
+HELO
+201 OK
+This is a beautiful red-yellow-green-white-black-hat bonbon!

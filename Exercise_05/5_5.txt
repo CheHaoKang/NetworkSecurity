@@ -1,0 +1,14 @@
+SHA3 has become a hashing standard since August 5, 2015.
+SHA3 uses a different approach called "Sponge Construction" for hashing whose internal
+structure varies from the other SHAs.
+
+I choose SHA3-512 because:
+1. It is the newest version of SHA
+2. It uses a different approach called "Sponge Construction" for hashing whose internal
+structure varies from the other SHAs.
+
+Therefore, it is not easy for hackers to compromise the security of SHA3-512.
+
+1. https://en.wikipedia.org/wiki/Secure_Hash_Algorithm
+2. https://en.wikipedia.org/wiki/SHA-3
+3. http://stackoverflow.com/questions/14356526/whats-the-difference-between-the-hash-algorithms-sha-2-and-sha-3

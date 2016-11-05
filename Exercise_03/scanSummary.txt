@@ -1,0 +1,99 @@
+===10.0.0.0/24===
+10.0.0.5:
+----------------
+PORT		STATE	SERVICE
+22/tcp		open	ssh
+
+OS CPE: cpe:/o:linux:linux_kernel:3 cpe:/o:linux:linux_kernel:4
+OS details: Linux 3.2 - 4.4
+
+10.0.0.10:
+----------------
+PORT		STATE	SERVICE
+22/tcp		open	ssh
+53/tcp		open	domain
+
+OS CPE: cpe:/o:linux:linux_kernel:3 cpe:/o:linux:linux_kernel:4
+OS details: Linux 3.2 - 4.4
+
+10.0.0.11:
+----------------
+PORT		STATE	SERVICE
+22/tcp		open	ssh
+5432/tcp	open	postgresql
+
+OS CPE: cpe:/o:freebsd:freebsd:7 cpe:/o:freebsd:freebsd:8 cpe:/o:freebsd:freebsd:9 cpe:/o:freebsd:freebsd:10
+OS details: FreeBSD 7.0-RELEASE-p1 - 10.0-CURRENT
+
+10.0.0.12:
+----------------
+PORT		STATE	SERVICE
+22/tcp		open	ssh
+80/tcp		open	http
+4242/tcp	open	vrml-multi-use
+
+OS CPE: cpe:/o:linux:linux_kernel:3 cpe:/o:linux:linux_kernel:4
+OS details: Linux 3.2 - 4.4
+
+10.0.0.13:
+----------------
+PORT		STATE	SERVICE
+22/tcp		open	ssh
+2049/tcp	open	nfs
+
+OS CPE: cpe:/o:linux:linux_kernel:2.6.32 cpe:/o:linux:linux_kernel:3
+OS details: Linux 2.6.32, Linux 2.6.32 - 3.10, Linux 2.6.32 - 3.13
+
+10.0.0.42:
+----------------
+PORT		STATE	SERVICE
+21/tcp		open	ftp
+135/tcp		open	msrpc
+139/tcp		open	netbios-ssn
+445/tcp		open	microsoft-ds
+
+OS CPE: cpe:/o:microsoft:windows_xp::sp2 cpe:/o:microsoft:windows_xp::sp3
+OS details: Microsoft Windows XP SP2 or SP3
+
+10.0.0.99:
+----------------
+PORT		STATE	SERVICE
+22/tcp		open	ssh
+2222/tcp	open	EtherNetIP-1
+
+OS CPE: cpe:/o:linux:linux_kernel:3 cpe:/o:linux:linux_kernel:4
+OS details: Linux 3.2 - 4.4
+
+10.0.0.1:
+----------------
+PORT		STATE	SERVICE
+22/tcp		open	ssh
+111/tcp		open	rpcbind
+139/tcp		open	netbios-ssn
+445/tcp		open	microsoft-ds
+
+OS CPE: cpe:/o:linux:linux_kernel:3 cpe:/o:linux:linux_kernel:4
+OS details: Linux 3.8 - 4.4
+
+
+===10.1.1.0/24===
+10.1.1.1:
+----------------
+PORT		STATE	SERVICE
+22/tcp		open	ssh
+
+OS CPE: cpe:/o:linux:linux_kernel:3 cpe:/o:linux:linux_kernel:4
+OS details: Linux 3.2 - 4.4
+
+10.1.1.2:
+----------------
+PORT		STATE	SERVICE
+22/tcp		open	ssh
+111/tcp		open	rpcbind
+139/tcp		open	netbios-ssn
+445/tcp		open	microsoft-ds
+
+OS CPE: cpe:/o:linux:linux_kernel:3.19 cpe:/o:linux:linux_kernel:4
+OS details: Linux 3.19, Linux 3.8 - 4.4
+
+
